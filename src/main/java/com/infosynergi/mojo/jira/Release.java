@@ -50,7 +50,7 @@ public class Release extends AbstractMojo {
     }
 
     private void createNewVersion(JiraRestClient jiraRestClient, VersionRestClient versionRestClient, Project project) {
-        String versionAsString = mavenProject.getVersion();
+        String versionAsString = mavenProject.getVersion().replace("-SNAPSHOT", "");
         
         for (Version version : project.getVersions()) {
             if (version.equals(versionAsString)) {
@@ -70,7 +70,6 @@ public class Release extends AbstractMojo {
         Version version = JiraRestApiUtils.getVersion(jiraRestClient, project, releasedVersionAsString);
         
         VersionInputBuilder versionInputBuilder = new VersionInputBuilder(project.getKey(), version);
-        versionInputBuilder.setDescription("woohoo " + version.getDescription());
         versionInputBuilder.setReleased(true);
         versionInputBuilder.setReleaseDate(new DateTime());
         VersionInput versionInput = versionInputBuilder.build();
