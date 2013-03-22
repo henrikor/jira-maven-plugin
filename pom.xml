@@ -7,7 +7,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.infosynergi.mojo</groupId>
   <artifactId>jira-maven-plugin</artifactId>
-  <version>1.1</version>
+  <version>1.2-SNAPSHOT</version>
   <name>jira-maven-plugin Maven Mojo</name>
   <packaging>maven-plugin</packaging>
 
