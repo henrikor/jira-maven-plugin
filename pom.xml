@@ -11,6 +11,11 @@
   <name>jira-maven-plugin Maven Mojo</name>
   <packaging>maven-plugin</packaging>
 
+  <scm>
+    <connection>scm:hg:http://hg.infosynergi.no/maven-plugins/jira-maven-plugin/</connection>
+    <developerConnection>scm:hg:http://hg.infosynergi.no/maven-plugins/jira-maven-plugin/</developerConnection>
+  </scm>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
