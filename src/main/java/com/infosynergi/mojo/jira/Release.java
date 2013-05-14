@@ -29,24 +29,28 @@ public class Release extends AbstractMojo {
     protected MavenSession mavenSession;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
-        String dryRunAsString = (String) System.getProperties().get("dryRun");
+        try {
+            String dryRunAsString = (String) System.getProperties().get("dryRun");
 
-        if (dryRunAsString != null) {
-            if (Boolean.parseBoolean(dryRunAsString.trim())) {
-                getLog().info("dryRun specified. Not updating JIRA");
+            if (dryRunAsString != null) {
+                if (Boolean.parseBoolean(dryRunAsString.trim())) {
+                    getLog().info("dryRun specified. Not updating JIRA");
+                    return;
+                }
+            }
+        
+            JiraRestClient jiraRestClient = JiraRestApiUtils.getJiraRestClient(getLog(), mavenProject);
+            if (jiraRestClient == null) {
                 return;
             }
-        }
-        
-        JiraRestClient jiraRestClient = JiraRestApiUtils.getJiraRestClient(getLog(), mavenProject);
-        if (jiraRestClient == null) {
-            return;
-        }
-        Project project = JiraRestApiUtils.getProject(jiraRestClient, getLog(), mavenProject);
+            Project project = JiraRestApiUtils.getProject(jiraRestClient, getLog(), mavenProject);
 
-        VersionRestClient versionRestClient = jiraRestClient.getVersionRestClient();
-        markAsReleased(jiraRestClient, versionRestClient, project);
-        createNewVersion(jiraRestClient, versionRestClient, project);
+            VersionRestClient versionRestClient = jiraRestClient.getVersionRestClient();
+            markAsReleased(jiraRestClient, versionRestClient, project);
+            createNewVersion(jiraRestClient, versionRestClient, project);
+        } catch (Throwable e) {
+            getLog().error("Unable to update JIRA. Please check/update manually. " + e.toString());
+        }
     }
 
     private void createNewVersion(JiraRestClient jiraRestClient, VersionRestClient versionRestClient, Project project) {
@@ -65,7 +69,7 @@ public class Release extends AbstractMojo {
         getLog().info("Version, " + versionAsString + ", created in JIRA. " + createdVersion);
     }
 
-    private void markAsReleased(JiraRestClient jiraRestClient, VersionRestClient versionRestClient, Project project) throws MojoExecutionException, MojoFailureException {
+    private void markAsReleased(JiraRestClient jiraRestClient, VersionRestClient versionRestClient, Project project) throws MojoExecutionException, MojoFailureException {       
         String releasedVersionAsString = getReleasedVersion(project);
         Version version = JiraRestApiUtils.getVersion(jiraRestClient, project, releasedVersionAsString);
         
